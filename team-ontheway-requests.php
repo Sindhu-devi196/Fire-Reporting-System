@@ -1,13 +1,19 @@
 <?php session_start();
 //DB conncetion
 include_once('includes/config.php');
-//error_reporting(0);
+error_reporting(0);
 //validating Session
 if (strlen($_SESSION['aid']==0)) {
   header('location:logout.php');
   } else{
 
-
+//Code for record deletion
+if($_GET['teamid']){
+$tid=$_GET['teamid'];
+mysqli_query($con,"delete from tblteams where id ='$tid'");
+echo "<script>alert('Data Deleted');</script>";
+echo "<script>window.location.href='manage-teams.php'</script>";
+          }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,7 +26,7 @@ if (strlen($_SESSION['aid']==0)) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>OFRS | Search Report</title>
+    <title>Manage Team On the Way Fire Reporting</title>
 
     <!-- Custom fonts for this template -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -57,25 +63,24 @@ if (strlen($_SESSION['aid']==0)) {
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-<?php
-$searchdata=$_POST['serachdata'];
 
-?>
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Search Result Againt '<?php echo $searchdata;?>' </h1>
+                       <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Manage Team On the Way Fire Reporting</h1>
+                
+                    </div>
     
 
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Search Report Results</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Fire Reporting Information</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <form name="assignto" method="post">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
-                                       <tr>
+                                        <tr>
                                             <th>Sno.</th>
                                             <th>Name</th>
                                             <th>Mobile Number</th>
@@ -85,8 +90,8 @@ $searchdata=$_POST['serachdata'];
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                      <tfoot>
-                                         <tr>
+                                    <tfoot>
+                                     <tr>
                                             <th>Sno.</th>
                                             <th>Name</th>
                                             <th>Mobile Number</th>
@@ -97,12 +102,11 @@ $searchdata=$_POST['serachdata'];
                                         </tr>
                                     </tfoot>
                                     <tbody>
-<?php $query=mysqli_query($con,"select * from tblfirereport where   fullName like '%$searchdata%' || mobileNumber like '%$searchdata%' || location like '%$searchdata%'");
+<?php $query=mysqli_query($con,"select * from tblfirereport where status='Team On the Way'");
 $cnt=1;
 while($row=mysqli_fetch_array($query)){
 ?>
-            
-                         
+
                                         <tr>
                                             <td><?php echo $cnt;?></td>
                                             <td><?php echo $row['fullName'];?></td>
@@ -120,7 +124,6 @@ while($row=mysqli_fetch_array($query)){
                            } ?>
                                     </tbody>
                                 </table>
-                                     </form>
                             </div>
                         </div>
                     </div>
@@ -130,7 +133,6 @@ while($row=mysqli_fetch_array($query)){
 
             </div>
             <!-- End of Main Content -->
-
 
             <!-- Footer -->
     <?php include_once('includes/footer.php');?>

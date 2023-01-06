@@ -20,7 +20,7 @@ if (strlen($_SESSION['aid']==0)) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>OFRS | Search Report</title>
+    <title>OFRS | B/w Dates Report</title>
 
     <!-- Custom fonts for this template -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -58,24 +58,25 @@ if (strlen($_SESSION['aid']==0)) {
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 <?php
-$searchdata=$_POST['serachdata'];
+$fdate=$_POST['fromdate'];
+$tdate=$_POST['todate'];
 
 ?>
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Search Result Againt '<?php echo $searchdata;?>' </h1>
+                    <h1 class="h3 mb-2 text-gray-800">B/W Dates Report Result From <?php echo $fdate;?> to <?php echo $tdate;?> </h1>
     
 
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Search Report Results</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">B/W Dates Report Results</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <form name="assignto" method="post">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
-                                       <tr>
+                                         <tr>
                                             <th>Sno.</th>
                                             <th>Name</th>
                                             <th>Mobile Number</th>
@@ -86,7 +87,7 @@ $searchdata=$_POST['serachdata'];
                                         </tr>
                                     </thead>
                                       <tfoot>
-                                         <tr>
+                                        <tr>
                                             <th>Sno.</th>
                                             <th>Name</th>
                                             <th>Mobile Number</th>
@@ -97,13 +98,13 @@ $searchdata=$_POST['serachdata'];
                                         </tr>
                                     </tfoot>
                                     <tbody>
-<?php $query=mysqli_query($con,"select * from tblfirereport where   fullName like '%$searchdata%' || mobileNumber like '%$searchdata%' || location like '%$searchdata%'");
+<?php $query=mysqli_query($con,"select * from tblfirereport where  date(tblfirereport.postingDate) between '$fdate' and '$tdate'
+    ");
 $cnt=1;
 while($row=mysqli_fetch_array($query)){
 ?>
             
-                         
-                                        <tr>
+                        <tr>
                                             <td><?php echo $cnt;?></td>
                                             <td><?php echo $row['fullName'];?></td>
                                             <td><?php echo $row['mobileNumber'];?></td>

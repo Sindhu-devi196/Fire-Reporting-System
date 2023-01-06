@@ -1,13 +1,19 @@
 <?php session_start();
 //DB conncetion
 include_once('includes/config.php');
-//error_reporting(0);
+error_reporting(0);
 //validating Session
 if (strlen($_SESSION['aid']==0)) {
   header('location:logout.php');
   } else{
 
-
+//Code for record deletion
+if($_GET['teamid']){
+$tid=$_GET['teamid'];
+mysqli_query($con,"delete from tblteams where id ='$tid'");
+echo "<script>alert('Data Deleted');</script>";
+echo "<script>window.location.href='manage-teams.php'</script>";
+          }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,7 +26,7 @@ if (strlen($_SESSION['aid']==0)) {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>OFRS | Search Report</title>
+    <title>Manage Teams</title>
 
     <!-- Custom fonts for this template -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -57,70 +63,67 @@ if (strlen($_SESSION['aid']==0)) {
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-<?php
-$searchdata=$_POST['serachdata'];
 
-?>
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Search Result Againt '<?php echo $searchdata;?>' </h1>
+                       <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Manage Teams</h1>
+                
+                    </div>
     
 
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Search Report Results</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Team Information</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <form name="assignto" method="post">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
-                                       <tr>
+                                        <tr>
                                             <th>Sno.</th>
-                                            <th>Name</th>
-                                            <th>Mobile Number</th>
-                                            <th>Location </th>
-                                             <th>Message</th>
-                                             <th>Reporting Time</th>
+                                            <th>Team Name</th>
+                                            <th>Team Leader Name</th>
+                                            <th>TL Mobile Number</th>
+                                             <th>Team Memebers</th>
+                                             <th>Regd Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                      <tfoot>
-                                         <tr>
+                                    <tfoot>
+                                        <tr>
                                             <th>Sno.</th>
-                                            <th>Name</th>
-                                            <th>Mobile Number</th>
-                                            <th>Location </th>
-                                             <th>Message</th>
-                                             <th>Reporting Time</th>
+                                            <th>Team Name</th>
+                                            <th>Team Leader Name</th>
+                                            <th>TL Mobile Number</th>
+                                             <th>Team Memebers</th>
+                                             <th>Regd Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
-<?php $query=mysqli_query($con,"select * from tblfirereport where   fullName like '%$searchdata%' || mobileNumber like '%$searchdata%' || location like '%$searchdata%'");
+<?php $query=mysqli_query($con,"select * from tblteams ");
 $cnt=1;
 while($row=mysqli_fetch_array($query)){
 ?>
-            
-                         
+
                                         <tr>
                                             <td><?php echo $cnt;?></td>
-                                            <td><?php echo $row['fullName'];?></td>
-                                            <td><?php echo $row['mobileNumber'];?></td>
-                                            <td><?php echo $row['location'];?></td>
-                                            <td><?php echo $row['messgae'];?></td>
+                                            <td><?php echo $row['teamName'];?></td>
+                                            <td><?php echo $row['teamLeaderName'];?></td>
+                                            <td><?php echo $row['teamLeadMobno'];?></td>
+                                            <td><?php echo $row['teamMembers'];?></td>
                                             <td><?php echo $row['postingDate'];?></td>
                                             <td>
 
-                                <a href="request-details.php?requestid=<?php echo $row['id'];?>" class="btn-sm btn-primary">View</a> 
+                                <a href="edit-team.php?teamid=<?php echo $row['id'];?>&&tname=<?php echo $row['teamName'];?>" class="btn-sm btn-primary">Edit</a> 
 
-                              </td>
+                                <a href="manage-teams.php?teamid=<?php echo $row['id'];?>" onclick="return confirm('Do you really want to delete the team?');" class="btn-sm btn-danger">Delete</a></td>
                                         </tr>
                                <?php $cnt++;
                            } ?>
                                     </tbody>
                                 </table>
-                                     </form>
                             </div>
                         </div>
                     </div>
@@ -130,7 +133,6 @@ while($row=mysqli_fetch_array($query)){
 
             </div>
             <!-- End of Main Content -->
-
 
             <!-- Footer -->
     <?php include_once('includes/footer.php');?>
